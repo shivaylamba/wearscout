@@ -1,115 +1,175 @@
-<img src="jev_ultrafast/static/backdrop.jpg" alt="Illustrated San Francisco street of painted rowhouses stepping down toward the bay" width="100%" />
+# Threadline ↗
 
-# Hearth: an AI agent that searches four rental marketplaces
+### See a look. Find similar clothing across shops.
 
-Hearth drives a real Chrome browser to search Craigslist, Facebook Marketplace, Redfin and Zillow from one
-plain-language request, and returns a single shortlist of matching rentals. You watch every click it makes
-as it goes.
+Upload a clothing photo, review the description, and watch a real Chrome browser search for similar products. **Nebius handles image understanding. TypeSafe Jev chooses browser actions and judges relevance.** Product titles, images, prices and links come from observed shop pages.
 
-It never messages a seller, saves a listing or starts a transaction. It only reads pages and reports what it
-found.
+**Built from [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search) by [Nancy Chauhan](https://github.com/Nancy-Chauhan)**, using [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) by Browser Use. Nancy’s visible, multi-site rental-search demo inspired this clothing-search adaptation. See [Credits](#credits-and-license).
 
-https://github.com/user-attachments/assets/ba58c178-1367-4e83-b77f-0f0476652ff1
+![Threadline interface showing the search brief, real browser view and activity log](docs/threadline/app.png)
 
-## What you need
+## See it in action
 
-- **[uv](https://docs.astral.sh/uv/)** to run the app and install everything
-- **Google Chrome**. Hearth drives it, and voice search needs it
-- **A [TypeSafe](https://typesafe.ai) API key**. A search costs a fraction of a cent
+These screenshots show the actual local app after a live run; they are not mockups.
 
-## Setup
+![Actual Meesho shortlist with product-page checks](docs/threadline/results.png)
 
-**1. Clone and install**
+In the recorded test, the existing image description was **a white sleeveless mini dress with a square neckline and textured fabric**. The image-analysis result was reused; shopping searches and Jev calls were fresh.
 
-```bash
-git clone https://github.com/Nancy-Chauhan/hearth-jev-rental-search.git
-cd hearth-jev-rental-search
-uv sync
+| Shop | Observed candidates | Final shortlist | Product-page evidence |
+| --- | ---: | ---: | --- |
+| Amazon India | 9 | 7 | 3 retained matches page-checked |
+| Meesho, separate run | 20; first 16 scored | 2 | 3 pages checked; Jev retained 2 after reassessment |
+
+The useful part: Meesho search cards used generic names. After opening the pages, Threadline found more descriptive titles, passed that evidence back to Jev, and dropped one candidate. The retained products had observed page prices of ₹186 and ₹322 at test time. Those are historical observations, not current offers.
+
+- [Sanitized live-run evidence](docs/threadline/live-run.json): real action events and retained products, without credentials, screenshots or local paths.
+- [Validation notes](docs/threadline-validation.md): test scope, failures and limitations.
+- An earlier combined run hit a Jev connection failure on Meesho. The separate Meesho run succeeded. This is a working prototype, not a reliability benchmark.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Clothing photo] --> B[Nebius vision description]
+    B --> C[Review search phrase]
+    C --> D[Jev browser decisions]
+    D --> E[Real Chrome search]
+    E --> F[Extract observed product cards]
+    F --> G[Jev relevance choices]
+    G --> H[Open top 3 product pages per shop]
+    H --> I[Check product identity and read details]
+    I --> J[Jev reassesses page evidence]
+    J --> K[Shortlist with evidence labels]
 ```
 
-**2. Add your key**
+### What Jev actually does
+
+- **Browser decisions:** selects an operation and an observed target using typed choice heads in one fan-out request. The executor consumes the target for the selected operation.
+- **Search input:** selects the user-reviewed query for an observed search field.
+- **Relevance:** labels each observed candidate `strong`, `possible` or `unrelated` using independent choice heads in a batch.
+- **Reassessment:** judges the detailed product-page description again; a plausible search card can still be rejected.
+
+Jev does not generate product URLs, prices, selectors or executable code. Deterministic code extracts cards, checks product IDs and executes supported actions. Nebius handles the uploaded image. Matching is description-to-text, not a pixel-level comparison against every product photo.
+
+### Product evidence
+
+Card adapters isolate Amazon, Meesho and Myntra products. Containers containing multiple product identities are rejected to avoid mixing neighboring titles and prices. Tracking links are deduplicated by product ID, images survive duplicate merging, and conflicting card prices are withheld.
+
+The top three relevant products per shop receive a bounded page check. Redirects to another product are rejected. Generic card titles can be replaced with the page’s detailed title before Jev reassesses relevance. Blocked or unreadable pages remain explicitly unverified. Remaining candidates carry **card evidence only** labels.
+
+## Run locally
+
+### Prerequisites
+
+- Python 3.12+ and [uv](https://docs.astral.sh/uv/).
+- Google Chrome, using a dedicated signed-out profile.
+- A [Nebius Token Factory](https://tokenfactory.nebius.com/) API key with access to the configured vision model.
+- A [TypeSafe](https://docs.typesafe.ai/introduction) API key for Jev.
+- Node.js only if you want to run the JavaScript tests.
 
 ```bash
+git clone https://github.com/shivaylamba/threadline-jev-shopping.git
+cd threadline-jev-shopping
+uv sync
 cp .env.example .env
 ```
 
-Open `.env` and set `TYPESAFE_API_KEY`. Nothing else is required.
+Set these values in `.env`:
 
-**3. Start a Chrome that Hearth may drive**
+```dotenv
+NEBIUS_API_KEY=your_nebius_key
+NEBIUS_BASE_URL=https://api.tokenfactory.nebius.com/v1
+NEBIUS_VISION_MODEL=deepseek-ai/DeepSeek-V4.1-Flash
+TYPESAFE_API_KEY=your_typesafe_key
+TYPESAFE_MODEL=jev-latest
+BU_CDP_URL=http://127.0.0.1:9224
+```
 
-Use a separate profile, not your everyday one.
+The vision model ID reflects the tested account configuration. Your account must have access and support image inputs. The app does not silently substitute a different model. Provider calls may incur charges. Credentials stay on the local server; `.env` is ignored by Git.
+
+Start a separate Chrome instance from the project directory.
+
+**macOS**
 
 ```bash
-# macOS
-profile=$(mktemp -d /tmp/hearth-chrome.XXXXXX)
-open -na 'Google Chrome' --args --remote-debugging-port=9222 \
-  --user-data-dir="$profile" --no-first-run --no-default-browser-check about:blank
-
-# Linux
-google-chrome --remote-debugging-port=9222 --user-data-dir=/tmp/hearth-chrome \
+open -na 'Google Chrome' --args --remote-debugging-port=9224 \
+  --user-data-dir="$PWD/.chrome-profile" \
   --no-first-run --no-default-browser-check about:blank
 ```
 
-**4. Run Hearth**
+**Linux**
 
 ```bash
-BU_CDP_URL=http://127.0.0.1:9222 uv run jev
+google-chrome --remote-debugging-port=9224 \
+  --user-data-dir="$PWD/.chrome-profile" \
+  --no-first-run --no-default-browser-check about:blank
 ```
 
-**5. Open it**
-
-Open <http://127.0.0.1:8766> in your normal Chrome. The header should say **Jev ready**.
-
-Two Chromes are involved. The one from step 3 is the browser Hearth controls, and the one from step 5 only
-displays the app. If the header does not say **Jev ready**, the key in `.env` was not picked up, so restart
-the server.
-
-## Using Hearth
-
-1. Type or speak your search in the bar at the top, for example `studio in Oakland under $2,500, near BART`.
-   Hearth fills in the filters for you. You can also set them by hand on the left: where, monthly budget,
-   home type, how recently listed, and which marketplaces to search.
-2. Press **Start searching**. Hearth opens one tab per marketplace and works through them in order.
-3. Watch the run. The live browser view is on the right, and every action Hearth takes appears in the
-   activity rail with its cost and duration. Press **Stop** at any time.
-4. Read the results. Hearth shows a first match, a shortlist, and a report of up to 18 listings from every
-   source, each with a photo, rent, facts and a direct link.
-
-Listings are labelled honestly. A tick means the listing's own text proved that detail, and a question mark
-means the marketplace did not state it. Always confirm availability on the original listing.
-
-## Marketplaces
-
-Hearth searches Craigslist, Facebook Marketplace, Redfin and Zillow. Sometimes a marketplace shows a bot
-check, a sign-in wall or a rate limit. Hearth reports it on the source tab, keeps the listings it already
-collected, and moves on to the next source. It will not solve a CAPTCHA for you. If you clear a check by
-hand in the agent's Chrome window, press **Continue with this source** to resume.
-
-### Signing in to a marketplace (optional)
-
-Craigslist works straight away. Facebook Marketplace, Redfin and Zillow often work better with a signed-in
-session, and some of them show a bot check without one.
-
-Sign in as usual in your own browser, export those cookies, and load them into the Chrome Hearth drives:
+Then start the app:
 
 ```bash
-uv run python scripts/load_cookies.py ~/Downloads/cookies.json
+uv run threadline
 ```
 
-The cookies are written into that Chrome's profile, so they survive restarts. They are live credentials:
-keep the export outside this repository (`.gitignore` already blocks `cookies*.json`), and rotate anything
-you have shared.
+Open **http://127.0.0.1:8768/**. Upload a JPEG, PNG or WebP under 5 MB, choose **Describe this garment**, review the phrase, select Amazon or Meesho, then choose **Find similar clothing**. Watch the dedicated Chrome window or the app’s browser view and action log.
 
-## Good to know
+For another app port, set it in the launching shell: `WARDROBE_PORT=8769 uv run threadline`. The app is loopback-only and requires the local Chrome process; it is not a static website deployment.
 
-- Everything runs on your machine. Your API key stays in `.env`, which is never committed.
-- Hearth only reads pages and clicks controls it can see. It does not enter credentials or create accounts.
-- Results reflect what a listing page says, so availability and details can change.
-- A source may stop early. Hearth says so instead of pretending the search finished.
-- Other settings are optional and documented in `.env.example`.
+## Supported sources and current limits
 
----
+| Source | Status |
+| --- | --- |
+| Amazon India | End-to-end browser search, extraction and sampled page checks live-tested |
+| Meesho | End-to-end browser search, extraction and sampled page checks live-tested |
+| Myntra | Adapter implemented; not live-verified |
+| Google | Direct links to supported retailers handled; carousel-only entries and other retailer domains unsupported |
 
-Built on **[Jev Ultrafast](https://github.com/browser-use/jev-ultrafast)** by
-[Browser Use](https://github.com/browser-use/browser-use), with decisions from
-[TypeSafe](https://docs.typesafe.ai/patterns/fan-out). MIT licensed. See [LICENSE](LICENSE).
+- Searches sample candidates: up to 16 browser decisions per source and 16 candidates scored. The app is not an exhaustive catalog search.
+- A strong text match does **not** prove the exact same garment. Page checks do not confirm size, inventory, delivery or visual identity.
+- Prices are observations. If no page price is extracted, the card price remains explicitly unconfirmed on the product page.
+- Retailer layout changes, CAPTCHA/access blocks and provider connection failures can interrupt runs. Access challenges are reported, not bypassed.
+- Shops run sequentially in one owned browser tab. Verification adds page loads; model latency is shown separately from total search time.
+- No purchases, cart additions, account creation, messages or credential entry. Action filtering reduces risk but is not a general security boundary against every ambiguous site control.
+- Stop prevents subsequent work after an in-flight call returns; it cannot undo an already-issued action.
+- Uploaded photos are sent to Nebius and retained only in app memory. Provider policies are separate. Browser cache/history remain in the dedicated profile. Do not publish `.env`, profiles or private run artifacts.
+
+## Development
+
+```bash
+uv run ruff check .
+uv run pytest
+node --check jev_ultrafast/wardrobe_static/app.js
+node --check jev_ultrafast/products.js
+node --check jev_ultrafast/product_detail.js
+node --check jev_ultrafast/static/app.js
+node --check jev_ultrafast/static/report.js
+node --check jev_ultrafast/static/query.js
+node --check jev_ultrafast/static/telemetry.js
+node --test tests/report.test.js tests/query.test.js tests/telemetry.test.js
+uv build
+```
+
+Optional browser extraction fixtures: install Playwright outside the Python environment (or make it available through `NODE_PATH`), install its Chromium browser, then run `node tests/products.browser.cjs`. Requests in these fixtures are intercepted locally; they do not call retailers or paid model APIs.
+
+Validated at publication: **78 Python tests**, **52 inherited JavaScript tests**, browser extraction fixtures, Ruff, syntax checks and package build. Live checks are documented separately from offline tests.
+
+| File | Responsibility |
+| --- | --- |
+| `jev_ultrafast/wardrobe.py` | Local server, cancellation, source orchestration |
+| `jev_ultrafast/fashion.py` | Vision contract, deduplication, verification, Jev relevance |
+| `jev_ultrafast/products.js` | Read-only product-card extraction |
+| `jev_ultrafast/product_detail.js` | Read-only product-page evidence |
+| `jev_ultrafast/wardrobe_static/` | Threadline interface |
+| `jev_ultrafast/agent.py`, `browser.py`, `model.py` | Inherited and adapted Jev browser execution loop |
+
+## Credits and license
+
+**Thank you to [Nancy Chauhan](https://github.com/Nancy-Chauhan) for [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search).** This repository is an adaptation of her rental-search project, not an independently created browser-agent foundation. Hearth’s visible multi-site search workflow is the starting point for Threadline. Its original README is preserved in [HEARTH.md](HEARTH.md), and upstream Git history is retained.
+
+- [Browser Use — Jev Ultrafast](https://github.com/browser-use/jev-ultrafast): underlying fast, typed browser-action architecture.
+- [TypeSafe](https://docs.typesafe.ai/patterns/fan-out): Jev decision and relevance inference.
+- [Nebius Token Factory](https://tokenfactory.nebius.com/): clothing-image understanding.
+- **Threadline adaptation:** image-led shopping flow, shop extraction, product verification, relevance reassessment and clothing-search interface by [Shivay Lamba](https://github.com/shivaylamba).
+
+MIT licensed. The original Browser Use copyright and license notice are preserved in [LICENSE](LICENSE). Historical Hearth/flight demos under `docs/`, `scripts/` and `examples/` belong to the inherited project; the Threadline screenshots and evidence live under `docs/threadline/`.

@@ -13,6 +13,7 @@ from browser_harness.helpers import cdp, close_tab, new_tab
 READ_STATE = Path(__file__).with_name("snapshot.js").read_text()
 MARKER = f"(() => {{ const state={READ_STATE}; return state?.marker ?? null; }})()"
 
+
 class StalePage(ValueError):
     """A decision no longer refers to the observed page."""
 
@@ -25,14 +26,16 @@ class BrowserDisconnected(RuntimeError):
 # replaying one after a dropped connection cannot change page content. Everything
 # else (Input.*, Emulation.*, Target.closeTarget, ...) can mutate the page and is
 # never replayed.
-IDEMPOTENT_METHODS = frozenset({
-    "Runtime.evaluate",
-    "Page.captureScreenshot",
-    "Page.navigate",
-    "Target.getTargets",
-    "Target.createTarget",
-    "Target.attachToTarget",
-})
+IDEMPOTENT_METHODS = frozenset(
+    {
+        "Runtime.evaluate",
+        "Page.captureScreenshot",
+        "Page.navigate",
+        "Target.getTargets",
+        "Target.createTarget",
+        "Target.attachToTarget",
+    }
+)
 
 # The first attempt plus up to two reconnects, with a small bounded backoff.
 RETRY_ATTEMPTS = 3
@@ -121,8 +124,7 @@ def cdp_call(method, session_id=None, retry=True, **params):
                 last = reconnect
             time.sleep(RETRY_BACKOFF_SECONDS[min(attempt, len(RETRY_BACKOFF_SECONDS) - 1)])
     raise BrowserDisconnected(
-        f"The browser connection dropped during {method} and could not be restored "
-        f"after {attempts} attempts: {last}"
+        f"The browser connection dropped during {method} and could not be restored after {attempts} attempts: {last}"
     ) from last
 
 
@@ -217,7 +219,9 @@ class Browser:
                         else requestAnimationFrame(ready);
                       };
                       requestAnimationFrame(ready);
-                    }))(""" + json.dumps(action) + ")",
+                    }))("""
+                    + json.dumps(action)
+                    + ")",
                     awaitPromise=True,
                     returnByValue=True,
                 )
@@ -305,7 +309,8 @@ def browser_operation(request):
             if type(action["node"]) is not int:
                 raise ValueError("Invalid observed node")
             # Code-owned node IDs refer to actual observed elements, never model-generated selectors.
-            target = evaluate("""(action => {
+            target = evaluate(
+                """(action => {
               const e=window.__jevFast?.nodes.get(action.node);
               if (!e?.isConnected || e.matches(':disabled') || e.closest('[aria-disabled="true"],[inert]') ||
                   !e.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})) return null;
@@ -325,7 +330,11 @@ def browser_operation(request):
                 e.dispatchEvent(new Event('change',{bubbles:true}));
               }
               return point;
-            })(""" + json.dumps(action) + ")", retry=kind != "select")
+            })("""
+                + json.dumps(action)
+                + ")",
+                retry=kind != "select",
+            )
             if target is None:
                 if kind == "select":
                     raise RuntimeError("Dropdown execution was not confirmed; inspect before retrying.")
@@ -334,6 +343,16 @@ def browser_operation(request):
                 x, y = target["x"], target["y"]
                 for event in ("mousePressed", "mouseReleased"):
                     call("Input.dispatchMouseEvent", type=event, x=x, y=y, button="left", clickCount=1)
+                if kind == "press":
+                    for event_type in ("keyDown", "keyUp"):
+                        call(
+                            "Input.dispatchKeyEvent",
+                            type=event_type,
+                            key="Enter",
+                            code="Enter",
+                            windowsVirtualKeyCode=13,
+                            **({"text": "\r"} if event_type == "keyDown" else {}),
+                        )
                 if kind == "fill":
                     call(
                         "Input.dispatchKeyEvent",

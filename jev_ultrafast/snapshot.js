@@ -84,6 +84,9 @@
         e.isContentEditable || rname==='combobox' ? e.innerText.trim() : '';
       actions.push({...base,kind:editable?'fill':'click',value});
       if (editable) actions.push({...base,kind:'click',value,label:'Open '+base.label});
+      if (editable && ['INPUT','TEXTAREA'].includes(e.tagName) && value.trim() &&
+          (rname==='searchbox' || /search/i.test(base.label)))
+        actions.push({...base,kind:'press',value,label:'Submit search with Enter: '+base.label});
     }
   }
   const words=[], fallbackWords=[];

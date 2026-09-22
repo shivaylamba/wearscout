@@ -20,3 +20,6 @@ output/
 # `uv run python scripts/load_cookies.py <path>`.
 cookies*.json
 *.cookies.json
+
+.browser-harness/
+.chrome-profile/

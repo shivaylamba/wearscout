@@ -1,0 +1,141 @@
+{
+  "description": "Fresh Meesho search using an existing Nebius clothing description; vision was not rerun.",
+  "garment_description": "White sleeveless mini dress with a square neckline and textured fabric, worn with a prominent orange graduation stole/sash.",
+  "sources": {
+    "meesho": {
+      "name": "Meesho",
+      "status": "partial",
+      "count": 20,
+      "page_checked": 2,
+      "rejected": 0,
+      "message": "Collected observed product candidates."
+    }
+  },
+  "events": [
+    {
+      "message": "Opening Meesho in the dedicated Chrome window.",
+      "at": 1790068888.5532339
+    },
+    {
+      "message": "Meesho: Try Saree, Kurti or Search by Product Code",
+      "at": 1790068891.3412638,
+      "model": "jev-1.13.0",
+      "latency_ms": 1417,
+      "operation": "TYPE_TEXT"
+    },
+    {
+      "message": "Meesho: page changed; observing again without repeating the action.",
+      "at": 1790068891.355437
+    },
+    {
+      "message": "Meesho: Try Saree, Kurti or Search by Product Code",
+      "at": 1790068891.855511,
+      "model": "jev-1.13.0",
+      "latency_ms": 443,
+      "operation": "TYPE_TEXT"
+    },
+    {
+      "message": "Meesho: Submit search with Enter: Try Saree, Kurti or Search by Product Code",
+      "at": 1790068892.4875069,
+      "model": "jev-1.13.0",
+      "latency_ms": 501,
+      "operation": "PRESS_ENTER"
+    },
+    {
+      "message": "Meesho: page changed; observing again without repeating the action.",
+      "at": 1790068892.503125
+    },
+    {
+      "message": "Meesho: Submit search with Enter: Try Saree, Kurti or Search by Product Code",
+      "at": 1790068892.944334,
+      "model": "jev-1.13.0",
+      "latency_ms": 381,
+      "operation": "PRESS_ENTER"
+    },
+    {
+      "message": "Meesho: Wait for the page to update",
+      "at": 1790068893.502075,
+      "model": "jev-1.13.0",
+      "latency_ms": 448,
+      "operation": "WAIT"
+    },
+    {
+      "message": "Meesho: page changed; observing again without repeating the action.",
+      "at": 1790068893.5102139
+    },
+    {
+      "message": "Jev is comparing 20 observed Meesho products with your garment.",
+      "at": 1790068894.4050298
+    },
+    {
+      "message": "Checking product page 1/3: Stylish Ravishing Women Dresses",
+      "at": 1790068894.872611
+    },
+    {
+      "message": "Checking product page 2/3: Classic Graceful Women Dresses",
+      "at": 1790068895.531271
+    },
+    {
+      "message": "Checking product page 3/3: Trendy Latest Women Tops & Tunics",
+      "at": 1790068895.94467
+    },
+    {
+      "message": "Jev is reassessing 3 product-page descriptions from Meesho.",
+      "at": 1790068896.360841
+    },
+    {
+      "message": "Meesho: 2 page-checked matches retained.",
+      "at": 1790068896.776871,
+      "model": "jev-1.13.0",
+      "latency_ms": 416,
+      "candidates": 3
+    },
+    {
+      "message": "Meesho: 2 product pages checked; 0 mismatched links removed.",
+      "at": 1790068896.776875
+    },
+    {
+      "message": "Meesho: 2 potentially relevant products retained.",
+      "at": 1790068896.776916,
+      "model": "jev-1.13.0",
+      "latency_ms": 468,
+      "candidates": 16
+    },
+    {
+      "message": "Search finished. Confirm price, size and availability on the shop.",
+      "at": 1790068896.7776792
+    }
+  ],
+  "results": [
+    {
+      "title": "Solid Ribbed Square Neck Tank Dress",
+      "url": "https://www.meesho.com/solid-ribbed-square-neck-tank-dress/p/99d1v5",
+      "price": "₹186",
+      "page_price": "₹186",
+      "card_title": "Stylish Ravishing Women Dresses",
+      "match": "possible",
+      "verification": {
+        "status": "title_changed",
+        "reason": "Product ID agrees; shop page uses a different title. Jev reassesses the page evidence. Size, stock and exact visual match are not verified.",
+        "checked_url": "https://www.meesho.com/solid-ribbed-square-neck-tank-dress/p/99d1v5",
+        "checked_at": "2026-09-22T09:21:35.530Z"
+      },
+      "observed_at": "2026-09-22T09:21:34.401Z"
+    },
+    {
+      "title": "Trendy White Printed Flared One-Piece Dress for Women – Stylish & Comfortable for Casual Wear",
+      "url": "https://www.meesho.com/trendy-white-printed-flared-one-piece-dress-for-women-stylish-comfortable-for-casual-wear/p/92lfku",
+      "price": "₹322",
+      "page_price": "₹322",
+      "card_title": "Classic Graceful Women Dresses",
+      "match": "possible",
+      "verification": {
+        "status": "title_changed",
+        "reason": "Product ID agrees; shop page uses a different title. Jev reassesses the page evidence. Size, stock and exact visual match are not verified.",
+        "checked_url": "https://www.meesho.com/trendy-white-printed-flared-one-piece-dress-for-women-stylish-comfortable-for-casual-wear/p/92lfku",
+        "checked_at": "2026-09-22T09:21:35.943Z"
+      },
+      "observed_at": "2026-09-22T09:21:34.401Z"
+    }
+  ]
+}

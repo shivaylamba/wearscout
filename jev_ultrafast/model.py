@@ -56,7 +56,7 @@ def validate_choice(answer, ids):
 def action_space(actions):
     """One index per observed element; each operation has its own valid target choices."""
     elements, indices, targets, controls = [], {}, {}, {}
-    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT"}
+    operations = {"click": "CLICK", "fill": "TYPE_TEXT", "select": "SELECT", "press": "PRESS_ENTER"}
     for action in actions:
         kind = action["kind"]
         if kind not in operations:
@@ -94,6 +94,7 @@ def choose(state, goal, history, text_values=None):
     text_values = text_values or {}
     labels = {
         "CLICK": "Click an element, button, menu option, autocomplete suggestion, or calendar day.",
+        "PRESS_ENTER": "Submit a populated observed search input using the Enter key.",
         "TYPE_TEXT": (
             "Enter or replace text in an editable field using an exact user-provided value."
             if text_values
@@ -122,8 +123,7 @@ def choose(state, goal, history, text_values=None):
         }
     if text_values:
         value_criteria = {
-            name: {"exact_value": item["value"], "meaning": item["description"]}
-            for name, item in text_values.items()
+            name: {"exact_value": item["value"], "meaning": item["description"]} for name, item in text_values.items()
         } | {"none": "None of the supplied values belongs in this field."}
         for index, action in targets.get("TYPE_TEXT", {}).items():
             questions[f"type_text_value_{index}"] = {

@@ -18,6 +18,8 @@ Not now, or equivalent control is visible. Never enter authentication credential
 If a modal or overlay covers the results, dismiss it once and then review the results area;
 never toggle the same overlay repeatedly.
 Do not toggle a checkbox, switch, or radio already in the requested state.
+Use PRESS_ENTER to submit a populated search input when no visible Search button is available.
+Do not repeatedly click an already populated search input.
 Submit populated search fields before opening a result; a populated field alone is not an applied search.
 WAIT only when the needed control is absent/disabled, or submitted results are still loading.
 If Search/Submit is visible and the required fields are ready, CLICK it immediately.
