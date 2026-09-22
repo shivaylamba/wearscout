@@ -309,6 +309,8 @@ class Handler(BaseHTTPRequestHandler):
             "/": ("index.html", "text/html"),
             "/app.js": ("app.js", "text/javascript"),
             "/style.css": ("style.css", "text/css"),
+            "/studio.css": ("studio.css", "text/css"),
+            "/tokens.css": ("tokens.css", "text/css"),
             "/favicon.svg": ("favicon.svg", "image/svg+xml"),
         }
         if path not in files:

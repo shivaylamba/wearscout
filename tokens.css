@@ -1,0 +1,36 @@
+:root {
+  --color-paper: oklch(97.5% .007 65);
+  --color-surface: oklch(99% .003 65);
+  --color-well: oklch(93.5% .009 65);
+  --color-ink: oklch(24% .014 45);
+  --color-muted: oklch(46% .014 45);
+  --color-rule: oklch(83% .012 65);
+  --color-accent: oklch(46% .145 35);
+  --color-accent-ink: oklch(98% .004 65);
+  --color-focus: oklch(45% .16 255);
+  --color-success: oklch(38% .065 150);
+  --color-success-paper: oklch(93% .025 150);
+  --color-error: oklch(43% .15 25);
+  --color-error-paper: oklch(94% .025 25);
+  --color-clear: transparent;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Public Sans', sans-serif;
+  --text-sm: .8125rem;
+  --text-base: .9375rem;
+  --text-md: 1.125rem;
+  --text-heading: 2rem;
+  --text-display: 3.5rem;
+  --space-xs: .25rem;
+  --space-sm: .5rem;
+  --space-md: .75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space-3xl: 3rem;
+  --space-4xl: 4rem;
+  --radius-sm: 3px;
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-in: cubic-bezier(.4,0,1,1);
+  --ease-in-out: cubic-bezier(.65,0,.35,1);
+  --dur-short: 140ms;
+}

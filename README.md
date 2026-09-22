@@ -6,7 +6,11 @@ Upload a clothing photo, review the description, and watch a real Chrome browser
 
 **Built from [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search) by [Nancy Chauhan](https://github.com/Nancy-Chauhan)**, using [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) by Browser Use. Nancy’s visible, multi-site rental-search demo inspired this clothing-search adaptation. See [Credits](#credits-and-license).
 
-![Threadline interface showing the search brief, real browser view and activity log](docs/threadline/app.png)
+![Threadline studio showing the reference controls and photo-led shortlist](docs/threadline/app.png)
+
+## The shopping studio
+
+The interface follows [Hallmark](https://github.com/Nutlope/hallmark) and Impeccable design guidance: a compact reference panel beside a photo-led shortlist, Barlow Condensed + Public Sans, warm neutral surfaces and rust actions. Use **All finds / Page-checked** to filter evidence. Expand **Behind the search** for the real browser capture and Jev decision log. On phones, section links jump between the reference and the shortlist.
 
 ## See it in action
 

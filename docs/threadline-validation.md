@@ -39,3 +39,9 @@ The existing Nebius description was reused (white sleeveless square-neck texture
 4. Private local evidence: `artifacts/upgrade-live-results.json`, `artifacts/upgrade-meesho-results.json`, and corresponding desktop/mobile screenshots. These are excluded from source archives.
 
 Offline checks: 78 Python tests, 52 inherited JavaScript tests, and Playwright DOM fixtures for Amazon selling-price selection, adjacent-card isolation, spoofed hosts, Meesho title/price extraction, Google direct links and evidence labels. Ruff, JavaScript syntax checks and wheel/source build passed. Fixture tests do not call models or shopping sites. Live results are bounded samples, not exhaustive coverage or a reliability benchmark.
+
+## Shopping studio redesign — 22 September 2026
+
+Applied Hallmark and Impeccable guidance to the existing Threadline route. Reference controls and product shortlist now share the main workspace; activity is disclosed on demand and opens during a run. Added All finds / Page-checked filtering, clearer price/evidence copy, accessible photo controls, phone section links, visible keyboard focus, and reduced-motion styles. The backend search/ranking contracts are unchanged; two static stylesheet routes were added.
+
+Verified the real retained results in the new UI, then used intercepted API fixtures for UI-only checks (no extra model calls): empty state, invalid upload error persistence, valid upload, analysis loading controls, query preservation during polling, selecting shops, Stop, evidence details and activity disclosure. Zero JavaScript page errors. Checked 320, 375, 414, 768, 1440 and 1920 px layouts for overflow and captured desktop/mobile renders. Main text/surface contrast pairs measured 5.88:1 or higher; primary action text measured 7.20:1. Existing 78 Python and 52 JavaScript tests, Ruff, syntax checks and package build passed. These UI checks do not establish new shopping-site coverage.
