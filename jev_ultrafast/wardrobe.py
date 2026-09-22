@@ -398,7 +398,7 @@ def main():
     load_environment()
     os.environ.setdefault("BU_CDP_URL", "http://127.0.0.1:9224")
     server = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"Threadline: http://127.0.0.1:{PORT}", flush=True)
+    print(f"WearScout: http://127.0.0.1:{PORT}", flush=True)
     try:
         server.serve_forever()
     finally:

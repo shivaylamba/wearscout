@@ -9,7 +9,7 @@ dependencies = ["browser-harness==0.1.13", "httpx[http2]>=0.28,<1"]
 
 [project.scripts]
 jev = "jev_ultrafast.demo:main"
-threadline = "jev_ultrafast.wardrobe:main"
+wearscout = "jev_ultrafast.wardrobe:main"
 
 [build-system]
 requires = ["hatchling"]

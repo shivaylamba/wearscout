@@ -1,4 +1,4 @@
-# Threadline ↗
+# WearScout ↗
 
 ### See a look. Find similar clothing across shops.
 
@@ -6,7 +6,7 @@ Upload a clothing photo, review the description, and watch a real Chrome browser
 
 **Built from [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search) by [Nancy Chauhan](https://github.com/Nancy-Chauhan)**, using [Jev Ultrafast](https://github.com/browser-use/jev-ultrafast) by Browser Use. Nancy’s visible, multi-site rental-search demo inspired this clothing-search adaptation. See [Credits](#credits-and-license).
 
-![Threadline studio showing the reference controls and photo-led shortlist](docs/threadline/app.png)
+![WearScout studio showing the reference controls and photo-led shortlist](docs/wearscout/app.png)
 
 ## The shopping studio
 
@@ -16,7 +16,7 @@ The interface follows [Hallmark](https://github.com/Nutlope/hallmark) and Impecc
 
 These screenshots show the actual local app after a live run; they are not mockups.
 
-![Actual Meesho shortlist with product-page checks](docs/threadline/results.png)
+![Actual Meesho shortlist with product-page checks](docs/wearscout/results.png)
 
 In the recorded test, the existing image description was **a white sleeveless mini dress with a square neckline and textured fabric**. The image-analysis result was reused; shopping searches and Jev calls were fresh.
 
@@ -25,10 +25,10 @@ In the recorded test, the existing image description was **a white sleeveless mi
 | Amazon India | 9 | 7 | 3 retained matches page-checked |
 | Meesho, separate run | 20; first 16 scored | 2 | 3 pages checked; Jev retained 2 after reassessment |
 
-The useful part: Meesho search cards used generic names. After opening the pages, Threadline found more descriptive titles, passed that evidence back to Jev, and dropped one candidate. The retained products had observed page prices of ₹186 and ₹322 at test time. Those are historical observations, not current offers.
+The useful part: Meesho search cards used generic names. After opening the pages, WearScout found more descriptive titles, passed that evidence back to Jev, and dropped one candidate. The retained products had observed page prices of ₹186 and ₹322 at test time. Those are historical observations, not current offers.
 
-- [Sanitized live-run evidence](docs/threadline/live-run.json): real action events and retained products, without credentials, screenshots or local paths.
-- [Validation notes](docs/threadline-validation.md): test scope, failures and limitations.
+- [Sanitized live-run evidence](docs/wearscout/live-run.json): real action events and retained products, without credentials, screenshots or local paths.
+- [Validation notes](docs/wearscout-validation.md): test scope, failures and limitations.
 - An earlier combined run hit a Jev connection failure on Meesho. The separate Meesho run succeeded. This is a working prototype, not a reliability benchmark.
 
 ## How it works
@@ -73,8 +73,8 @@ The top three relevant products per shop receive a bounded page check. Redirects
 - Node.js only if you want to run the JavaScript tests.
 
 ```bash
-git clone https://github.com/shivaylamba/threadline-jev-shopping.git
-cd threadline-jev-shopping
+git clone https://github.com/shivaylamba/wearscout.git
+cd wearscout
 uv sync
 cp .env.example .env
 ```
@@ -113,12 +113,12 @@ google-chrome --remote-debugging-port=9224 \
 Then start the app:
 
 ```bash
-uv run threadline
+uv run wearscout
 ```
 
 Open **http://127.0.0.1:8768/**. Upload a JPEG, PNG or WebP under 5 MB, choose **Describe this garment**, review the phrase, select Amazon or Meesho, then choose **Find similar clothing**. Watch the dedicated Chrome window or the app’s browser view and action log.
 
-For another app port, set it in the launching shell: `WARDROBE_PORT=8769 uv run threadline`. The app is loopback-only and requires the local Chrome process; it is not a static website deployment.
+For another app port, set it in the launching shell: `WARDROBE_PORT=8769 uv run wearscout`. The app is loopback-only and requires the local Chrome process; it is not a static website deployment.
 
 ## Supported sources and current limits
 
@@ -164,16 +164,16 @@ Validated at publication: **78 Python tests**, **52 inherited JavaScript tests**
 | `jev_ultrafast/fashion.py` | Vision contract, deduplication, verification, Jev relevance |
 | `jev_ultrafast/products.js` | Read-only product-card extraction |
 | `jev_ultrafast/product_detail.js` | Read-only product-page evidence |
-| `jev_ultrafast/wardrobe_static/` | Threadline interface |
+| `jev_ultrafast/wardrobe_static/` | WearScout interface |
 | `jev_ultrafast/agent.py`, `browser.py`, `model.py` | Inherited and adapted Jev browser execution loop |
 
 ## Credits and license
 
-**Thank you to [Nancy Chauhan](https://github.com/Nancy-Chauhan) for [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search).** This repository is an adaptation of her rental-search project, not an independently created browser-agent foundation. Hearth’s visible multi-site search workflow is the starting point for Threadline. Its original README is preserved in [HEARTH.md](HEARTH.md), and upstream Git history is retained.
+**Thank you to [Nancy Chauhan](https://github.com/Nancy-Chauhan) for [Hearth](https://github.com/Nancy-Chauhan/hearth-jev-rental-search).** This repository is an adaptation of her rental-search project, not an independently created browser-agent foundation. Hearth’s visible multi-site search workflow is the starting point for WearScout. Its original README is preserved in [HEARTH.md](HEARTH.md), and upstream Git history is retained.
 
 - [Browser Use — Jev Ultrafast](https://github.com/browser-use/jev-ultrafast): underlying fast, typed browser-action architecture.
 - [TypeSafe](https://docs.typesafe.ai/patterns/fan-out): Jev decision and relevance inference.
 - [Nebius Token Factory](https://tokenfactory.nebius.com/): clothing-image understanding.
-- **Threadline adaptation:** image-led shopping flow, shop extraction, product verification, relevance reassessment and clothing-search interface by [Shivay Lamba](https://github.com/shivaylamba).
+- **WearScout adaptation:** image-led shopping flow, shop extraction, product verification, relevance reassessment and clothing-search interface by [Shivay Lamba](https://github.com/shivaylamba).
 
-MIT licensed. The original Browser Use copyright and license notice are preserved in [LICENSE](LICENSE). Historical Hearth/flight demos under `docs/`, `scripts/` and `examples/` belong to the inherited project; the Threadline screenshots and evidence live under `docs/threadline/`.
+MIT licensed. The original Browser Use copyright and license notice are preserved in [LICENSE](LICENSE). Historical Hearth/flight demos under `docs/`, `scripts/` and `examples/` belong to the inherited project; the WearScout screenshots and evidence live under `docs/wearscout/`.
